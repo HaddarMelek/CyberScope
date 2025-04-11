@@ -24,3 +24,13 @@ df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_", regex=Fals
 print("Cleaned column names:")
 print(df.columns.tolist())
 
+# expected date format pattern
+date_pattern = r'^\d{2}/\d{2}/\d{4} 0:00$'
+
+# nbr of rows match the format
+valid_dates_count = df['attackdate'].str.match(date_pattern).sum()
+print(f"Number of rows that match the '%d/%m/%Y 0:00' format: {valid_dates_count}")
+
+df['attackdate'] = df['attackdate'].str.replace('0:00', '').str.strip()
+df['attackdate'] = pd.to_datetime(df['attackdate'], format="%d/%m/%Y")
+
