@@ -1,6 +1,9 @@
 from google.colab import drive
 import os
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
 
 drive.mount('/content/drive', force_remount=True)
 file_path = "/content/drive/MyDrive/pfa/cyber_data.csv"
@@ -33,4 +36,24 @@ print(f"Number of rows that match the '%d/%m/%Y 0:00' format: {valid_dates_count
 
 df['attackdate'] = df['attackdate'].str.replace('0:00', '').str.strip()
 df['attackdate'] = pd.to_datetime(df['attackdate'], format="%d/%m/%Y")
+
+#handle missing values
+columns = ['spam', 'exploit', 'malicious_mail', 'network_attack', 'ransomware']
+
+missing_values = df[columns].isnull().sum() / len(df) * 100
+print("Missing Values Before Imputation:")
+print(missing_values.round(2), "
+")
+
+#Visualize distributions
+for col in columns:
+    plt.figure(figsize=(8, 5))
+    sns.histplot(df[col], bins=30, kde=True)
+    plt.title(f"Distribution of {col}")
+    plt.xlabel(col)
+    plt.ylabel("Frequency")
+    plt.show()
+
+    # median imputation
+    df[col].fillna(df[col].median(), inplace=True)
 
